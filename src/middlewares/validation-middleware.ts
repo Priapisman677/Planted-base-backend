@@ -1,3 +1,26 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//! Deprecated!!!!!!!
+
+
+
+
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
 import { ErrorCode, UnprocessableEntity } from '../exeptions/root-HttpException.js';
@@ -5,7 +28,7 @@ import { ErrorCode, UnprocessableEntity } from '../exeptions/root-HttpException.
 
 
 export const schemaValidation = (schema: AnyZodObject) => {
-	return (req: Request, res: Response, next: NextFunction): void => {
+	return (req: Request, _res: Response, next: NextFunction): void => {
 		try {
 			schema.parse(req);
 			next();
@@ -17,8 +40,6 @@ export const schemaValidation = (schema: AnyZodObject) => {
                 ));
 				return;
 			}
-			res.status(500).send('Unknown Error :(');
-			return;
 		}
 	};
 };
