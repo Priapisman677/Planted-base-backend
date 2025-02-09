@@ -11,14 +11,21 @@ app.use(router);
 
 export const prisma = new PrismaClient({
 	log: ['query'],
+
 })
 
 //$ Whenever a controller will throw an exception, this middleware will be called.
 app.use(errorMiddleWare);
 //$ As long as the function that we pass is a function with the "four parameters", Express will consider a valid error middleware.
 
-const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-	console.log(`Server is running at http://localhost:${PORT}`);
+
+
+app.get('/', (req, res) => {
+    res.send('hello sir');
 });
+
+
+
+//* I exported the app for testing vitest:
+export default app

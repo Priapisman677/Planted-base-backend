@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
-import { prisma } from '../routes/index.js';
+import { Request, Response } from 'express';
+import { prisma } from '../routes/app-setup.js';
 import {paikyHash, paikyCompare, paikyGetRandomSalt} from '../utils/salt-password.js';
 import { paikyJWTsign } from '../utils/jwt.js';
 import dotenv from 'dotenv'
@@ -10,9 +10,8 @@ dotenv.config()
 
 
 			//$ The reason why we include a next function here is not because this is a middleware . It is just so that we can trigger the error middleware that I defined.
-export const signup = async (req: Request, res: Response) => {
-	try {
-		const { name, email, password} = (req as SignupSchemaType).body ;
+export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Response) => {
+		const { name, email, password} = req.body ;
 
 		let user = await prisma.user.findFirst({
 			where: {
@@ -38,15 +37,9 @@ export const signup = async (req: Request, res: Response) => {
             }
         })
         res.send(user)
-	} catch (error) {
-
-		
-	
-	}
-
 };
-export const login = async (req: Request, res: Response) => {
-	try {
+export const login = async (req: Request<{}, {}, SignupSchemaType>, res: Response) => {
+	
 		const { email, password } = req.body;
         //! This should be middleware but I'll wait for the Indian guy to say it------------
 		let user = await prisma.user.findFirst({
@@ -58,17 +51,13 @@ export const login = async (req: Request, res: Response) => {
 		if (!user) throw new BadRequestsException('User not found', ErrorCode.USER_NOT_FOUND)
 		
         const result = paikyCompare(  password, user.salt,  user.password)
-		
+
         if (!result) throw new BadRequestsException('Invalid password', ErrorCode.INCORRECT_PASSWORD)
 
         res.send(paikyJWTsign({userId: user.id}, process.env.SECRET!))
 
        //!-----------------------------------------------------------------------------------
 
-	} catch (error) {
-		console.log(error);
-		res.status(400).send(error);
-	}
 };
 
 

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ErrorCode, HttpException } from '../exeptions/root-HttpException.js';
 import { InternalException } from '../exeptions/internal-exeption.js';
+import { N } from 'vitest/dist/chunks/environment.d8YfPkTm.js';
 
 //! I might need another function definition for an asynchronous type
 type expressFunction = (
@@ -18,6 +19,7 @@ export const internalErrorHandler = (func: expressFunction): expressFunction => 
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			await func(req, res, next); //$ Currently our controllers don't call "next". Because that is already being handled on line ¿28?
+            debugger
 		} catch (e) {
             let exception 
             if(e instanceof HttpException){

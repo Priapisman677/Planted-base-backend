@@ -13,12 +13,14 @@ export const paikyGetRandomSalt = ()=>{
 
 export const paikyHash = (password: string, salt: string): string => {
     console.time('1')
+    
 	const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha-256').toString('hex') //$ Output hex to be stored.
     console.timeEnd('1')
 	return hash;
 };
 
 export const paikyCompare = (password: string, salt: string, storedHash: string): Boolean => {
+
 	//$ Here I'm basically a recycling the function above.
 	const bufferFromInboundPass = Buffer.from(paikyHash(password, salt), 'hex');
     const bufferFromStoredHash = Buffer.from(storedHash, 'hex')
