@@ -1,0 +1,42 @@
+{
+    "type": "module",
+    "name": "uncc-code",
+    "version": "1.0.0",
+    "main": "NO-MAIN-SET",
+    "scripts": {
+        "build": "tsc",
+        "test": " vitest",
+        "dev1": "  npx nodemon --watch src --exec \"npx tsx src/routes/index.ts\"",
+        "dev2": "  npx nodemon --watch src --exec \"npx tsx src/crypto/password-generator.ts\"",
+        "dev3": "  npx nodemon --watch src --exec \"npx tsx src/\"",
+        "dev4": "  npx nodemon --watch src --exec \"npx tsx src/\"",
+        "dev5": "  npx nodemon --watch src --exec \"npx tsx src/\"",
+        "dev6": "  npx nodemon --watch src --exec \"npx tsx src/\"",
+        "dev7": "  npx nodemon --watch src --exec \"npx tsx src/\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@types/node": "^22.10.2",
+        "nodemon": "^3.1.9",
+        "prisma": "^6.3.1",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.3"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.3.1",
+        "@types/express": "^5.0.0",
+        "@types/pg": "^8.11.11",
+        "chalk": "^5.4.1",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "mime": "^4.0.6",
+        "mongodb": "^6.12.0",
+        "mongoose": "^8.9.5",
+        "pg": "^8.13.1",
+        "vitest": "^3.0.4",
+        "zod": "^3.24.1"
+    }
+}
