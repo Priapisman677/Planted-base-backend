@@ -1,13 +1,3 @@
-
-                    //! In this version I am not using the internal error exception          
-                    //! In this version I am not using the internal error exception          
-                    //! In this version I am not using the internal error exception          
-                    //! In this version I am not using the internal error exception          
-                    //! In this version I am not using the internal error exception          
-                    //! In this version I am not using the internal error exception          
-                    //! In this version I am not using the internal error exception          
-
-
 import { Router } from 'express';
 import { login, signup } from '../controllers/auth-controllers.js';
 import { schemaValidation } from '../middlewares/validation-middleware.js';
@@ -16,9 +6,8 @@ import { internalErrorHandler } from '../utils/internal-error-handler.js';
 
 
 const router = Router()
-                    //! In this version I am not using the internal error exception          
-router.post('/signup', schemaValidation(SignupSchema), signup);
-router.get('/login', login);
+router.post('/signup', schemaValidation(SignupSchema), internalErrorHandler(signup));
+router.get('/login', internalErrorHandler(login));
 
 
 export default router
