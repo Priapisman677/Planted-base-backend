@@ -5,8 +5,8 @@
     "main": "NO-MAIN-SET",
     "scripts": {
         "build": "tsc",
-        "test": " vitest",
-        "dev1": "  npx nodemon --watch src --exec \"npx tsx src/routes/app-listens.ts\"",
+        "test": " dotenv -e ./config/test.env -- vitest",
+        "dev1": "dotenv -e ./config/dev.env -- npx nodemon --watch src --exec \"npx tsx src/routes/app-listens.ts\"",
         "dev2": "  npx nodemon --watch src --exec \"npx tsx src/crypto/password-generator.ts\"",
         "dev3": "  npx nodemon --watch src --exec \"npx tsx src/\"",
         "dev4": "  npx nodemon --watch src --exec \"npx tsx src/\"",

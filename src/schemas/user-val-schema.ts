@@ -5,7 +5,7 @@ export const SignupSchema = z.object({
 	body: z.object({
 		name: z.string(),
 		email: z.string({ required_error: "Email is required",  }).email('Email is not valid').nonempty('Email cannot be empty'), 
-		password: z.string({required_error: 'Password is required'}).min(6).nonempty('Password cannot be empty'),
+		password: z.string({required_error: 'Password is required'}).min(6, 'Password must be at least 6 characters').nonempty('Password cannot be empty'),
 	}),
 })//! .strict();      If I were to enable a strict mode here it would say that all the other properties that come with your request are invalid.
 

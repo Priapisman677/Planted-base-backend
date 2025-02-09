@@ -1,14 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
-import { UnprocessableEntity } from '../exeptions/UnprocessableEntity.js';
-import { ErrorCode } from '../exeptions/root-HttpException.js';
+import { ErrorCode, UnprocessableEntity } from '../exeptions/root-HttpException.js';
 
 
 
 export const schemaValidation = (schema: AnyZodObject) => {
 	return (req: Request, res: Response, next: NextFunction): void => {
 		try {
-			console.log(req.body);
 			schema.parse(req);
 			next();
 		} catch (e) {

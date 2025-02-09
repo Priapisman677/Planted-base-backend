@@ -20,3 +20,23 @@ export enum ErrorCode {
     UNPROCESSABLE_ENTITY = 1004,
     INTERNAL_EXCEPTION = 1005
 }
+
+//* Exceptions:
+
+export class UnprocessableEntity  extends HttpException {
+    constructor( message: string, errorCode: ErrorCode, error: any){
+        super(message, errorCode, 422, error)
+    }
+}
+
+export class BadRequestsException extends HttpException {
+    constructor(message: string, errorCode: ErrorCode){
+        super(message, errorCode, 400, null)
+    }
+}
+
+export class InternalException  extends HttpException {
+    constructor( message: string, errorCode: ErrorCode, error: any){
+        super(message, errorCode, 500, error)
+    }
+}

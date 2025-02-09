@@ -1,51 +1,95 @@
-import { describe, it, expect, vi, beforeEach, afterAll, test } from "vitest";
-import request  from 'supertest'
-import app from '../src/routes/app-setup.ts'
-
+//prettier-ignore
+import { describe, it, expect, vi, beforeEach, afterAll, test, beforeAll } from "vitest";
+import request from 'supertest';
+import app, { prisma } from '../src/routes/app-setup.ts';
 
 //! I need to allow the startup to be able to test out of the box.
 
-describe('Login /', () => {
-    test('Should receive an error if body for /login is empty', async () => {
-        const result = await request(app)
-            .get('/login')
-            .send({}) // ✅ No need for JSON.stringify()
-            .set('Content-Type', 'application/json');
-
-        expect(result.body).toEqual({ // ✅ Use .body instead of .text
-            error_message: "Unprocessable entity",
-            errorCode: 1004,
-            error: ["Email is required", "Password is required"]
-        });
-    });
-
-    test('Should receive an error if credentials are empty', async () => {
-        const result = await request(app)
-            .get('/login')
-            .send({ email: "", password: "", name: "" }) // ✅ No JSON.stringify()
-            .set('Content-Type', 'application/json');
-
-        expect(result.body).toEqual({ // ✅ Use .body for JSON comparison
-            error_message: "Unprocessable entity",
-            errorCode: 1004,
-            error: ["Email cannot be empty", "Password cannot be empty"]
-        });
-    });
-
-    test('Should receive an error if credentials are empty', async () => {
-        const result = await request(app)
-            .get('/login')
-            .send({ email: "", password: "", name: "" }) // ✅ No JSON.stringify()
-            .set('Content-Type', 'application/json');
-
-        expect(result.body).toEqual({ // ✅ Use .body for JSON comparison
-            error_message: "Unprocessable entity",
-            errorCode: 1004,
-            error: ["Email cannot be empty", "Password cannot be empty"]
-        });
-    });
+beforeAll(async () => {
+	const deleted = await prisma.user.deleteMany({
+		where: {
+			email: 'carlos@dwati.com',
+		},
+	});
+	console.log('🚀 ~ beforeAll ~ deleted:', deleted);
 });
 
+describe('Login /', () => {
+    test('Should Be able to log in', async () => {
+		const result = await request(app)
+			.get('/login')
+			.send({email: 'constructor@dwati.com',password: 'Carbon7'}) // ✅ No need for JSON.stringify()
+			.set('Content-Type', 'application/json')
+            .expect(200);
+
+        console.log(result.body);
+        
+            
+		expect(result.text).toEqual('eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ.eyJ1c2VySWQiOjF9.A-OCTQh3VpIJMINmMpaGUm3BJOtbHYmIkbuCZlA36QU');
+	});
 
 
-// {"email":"lilyy@liiily9ooj2a.com", "password":"kkjh99"}
+	test('Should receive an error if body for /login is empty', async () => {
+		const result = await request(app)
+			.get('/login')
+			.send({}) // ✅ No need for JSON.stringify()
+			.set('Content-Type', 'application/json');
+
+		expect(result.body).toEqual({
+			error_message: 'Unprocessable entity',
+			errorCode: 1004,
+			error: ['Email is required', 'Password is required'],
+		});
+	});
+
+	test('Should receive an error if credentials are empty', async () => {
+		const result = await request(app)
+			.get('/login')
+			.send({ email: '', password: '' }) // ✅
+			.set('Content-Type', 'application/json');
+
+		expect(result.body).toEqual({
+			error_message: 'Unprocessable entity',
+			errorCode: 1004,
+			error: ['Email cannot be empty', 'Password cannot be empty'],
+		});
+	});
+
+});
+
+describe('Signup /', () => {
+    
+	test('Should receive an error if trying to take existing user', async () => {
+		//prettier-ignore
+		const result = await request(app)
+			.post('/signup')
+			.send({email: 'constructor@dwati.com',password: 'Carbon7',name: 'Constructor',})
+			.set('Content-Type', 'application/json');
+
+		expect(result.body).toEqual({
+			error_message: 'User already exists',
+			errorCode: 1002,
+			error: null,
+		});
+	});
+
+	test('Should be able to sign up successfully', async () => {
+		//prettier-ignore
+		const result = await request(app)
+			.post('/signup')
+			.send({email: 'carlos@dwati.com',password: 'Carbon7',name: 'Constructor',})
+			.set('Content-Type', 'application/json');
+
+		expect(result.body.email).toBe('carlos@dwati.com');
+	});
+
+    test('Should trigger precise validation error', async () => {
+		//prettier-ignore
+		const result = await request(app)
+			.post('/signup')
+			.send({email: 'carlos@dwati.com',password: 'Carbo',name: 'Constructor',})
+			.set('Content-Type', 'application/json');
+
+		expect(result.body.error[0]).toBe('Password must be at least 6 characters');
+	});
+}); 

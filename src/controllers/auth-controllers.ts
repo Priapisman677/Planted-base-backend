@@ -3,8 +3,7 @@ import { prisma } from '../routes/app-setup.js';
 import {paikyHash, paikyCompare, paikyGetRandomSalt} from '../utils/salt-password.js';
 import { paikyJWTsign } from '../utils/jwt.js';
 import dotenv from 'dotenv'
-import { BadRequestsException } from '../exeptions/bad-request.js';
-import { ErrorCode } from '../exeptions/root-HttpException.js';
+import { BadRequestsException, ErrorCode } from '../exeptions/root-HttpException.js';
 import { SignupSchemaType } from '../schemas/user-val-schema.js';
 dotenv.config()
 

@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { ErrorCode, HttpException } from '../exeptions/root-HttpException.js';
-import { InternalException } from '../exeptions/internal-exeption.js';
+import { ErrorCode, HttpException, InternalException } from '../exeptions/root-HttpException.js';
+import { AnyZodObject } from 'zod';
 
-//! I might need another function definition for an asynchronous type
 type expressFunction = (
 	req: Request,
 	res: Response,
@@ -14,7 +13,7 @@ type expressFunction = (
 //! At least it helps visually understand what it requires.
 
 //prettier-ignore
-export const internalErrorHandler = (func: expressFunction): expressFunction => {
+export const internalErrorHandler = (func: expressFunction, ): expressFunction => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			await func(req, res, next); //$ Currently our controllers don't call "next". Because that is already being handled on line ¿28?

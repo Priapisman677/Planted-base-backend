@@ -1,13 +1,8 @@
-This should include typescript, vitest, environment variables support, docker, increase the threads of scripts.
+Regarding environment variables files:
 
-Maybe support for commet.
+You will find three environment variable files.
+The one that is on the root will only be used for MIGRATIONS.
+If you want to run a migration to a specific database whether it's test or development uncommented and run the migration.
 
-1. I increased the number of threads in the thread pool by modifying the scripts.
-
-2. To run the +thread mode, make sure you add this in the terminal:
-$env:UV_THREADPOOL_SIZE = '5'
-
-3. If you want to use cluster mode, make sure you're not using nodemon.
-
-pd:
-I left a nodemon.json file because it might work for production, but  alternatively you have the package.json with support for preconfigured scripts that point to a specific files.
+The environment variable files that are in the config folder Will serve for prisma to actually get connected to the database during execution of the code, for example to perform "user.findMany()".
+Prisma can definitely take a look into these files and get connected to the specified database even if the databases in the .env on the root is commented.
