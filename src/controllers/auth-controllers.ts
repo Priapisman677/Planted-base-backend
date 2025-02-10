@@ -4,13 +4,13 @@ import {paikyHash, paikyCompare, paikyGetRandomSalt} from '../utils/salt-passwor
 import { paikyJWTsign } from '../utils/jwt.js';
 import dotenv from 'dotenv'
 import { BadRequestsException, ErrorCode } from '../exeptions/root-HttpException.js';
-import { SignupSchemaType } from '../schemas/user-val-schema.js';
+import { SignupSchemaType, TokenSchemaType } from '../validator-schemas/user-schemas.js';
 dotenv.config()
 
 
 			//$ The reason why we include a next function here is not because this is a middleware . It is just so that we can trigger the error middleware that I defined.
 export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Response) => {
-		const { name, email, password} = req.body ;
+		const { name, email, password, isAdmin} = req.body ;
 
 		let user = await prisma.user.findFirst({
 			where: {
@@ -32,10 +32,11 @@ export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Respon
                 email,
                 name,
                 password: paikyHash(password, salt),
-                salt
+                salt,
+				role: isAdmin? 'ADMIN' : 'USER'
             }
         })
-        res.send(user)
+        res.send(paikyJWTsign({userId: user.id}, process.env.SECRET!))
 };
 export const login = async (req: Request<{}, {}, SignupSchemaType>, res: Response) => {
 	
@@ -56,6 +57,17 @@ export const login = async (req: Request<{}, {}, SignupSchemaType>, res: Respons
         res.send(paikyJWTsign({userId: user.id}, process.env.SECRET!))
 
        //!-----------------------------------------------------------------------------------
+
+};
+
+export const authtest = async (req: Request<{}, {}, TokenSchemaType>, res: Response) => {
+	const id = (req as any).body.userId;
+	const user = await prisma.user.findUnique({
+		where: {
+			id
+		}
+	})
+	res.send(user)
 
 };
 

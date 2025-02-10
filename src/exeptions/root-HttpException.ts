@@ -18,7 +18,9 @@ export enum ErrorCode {
     USER_ALREADY_EXISTS = 1002,
     INCORRECT_PASSWORD = 1003,
     UNPROCESSABLE_ENTITY = 1004,
-    INTERNAL_EXCEPTION = 1005
+    INTERNAL_EXCEPTION = 1005,
+    UNAUTHORIZED = 1006,
+    TAG_NAME_REQUIRED =  1007
 }
 
 //* Exceptions:
@@ -38,5 +40,11 @@ export class BadRequestsException extends HttpException {
 export class InternalException  extends HttpException {
     constructor( message: string, errorCode: ErrorCode, error: any){
         super(message, errorCode, 500, error)
+    }
+}
+
+export class UnauthorizedException  extends HttpException {
+    constructor(message: string, errorCode: ErrorCode){
+        super(message, errorCode,  401, null)
     }
 }

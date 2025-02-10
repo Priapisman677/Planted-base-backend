@@ -63,7 +63,7 @@ describe('Signup /', () => {
 		//prettier-ignore
 		const result = await request(app)
 			.post('/signup')
-			.send({email: 'constructor@dwati.com',password: 'Carbon7',name: 'Constructor',})
+			.send({email: 'constructor@dwati.com',password: 'Carbon7',name: 'Constructor', isAdmin: false})
 			.set('Content-Type', 'application/json');
 
 		expect(result.body).toEqual({
@@ -77,10 +77,10 @@ describe('Signup /', () => {
 		//prettier-ignore
 		const result = await request(app)
 			.post('/signup')
-			.send({email: 'carlos@dwati.com',password: 'Carbon7',name: 'Constructor',})
+			.send({email: 'carlos@dwati.com',password: 'Carbon7',name: 'Constructor', isAdmin: false})
 			.set('Content-Type', 'application/json');
 
-		expect(result.body.email).toBe('carlos@dwati.com');
+		expect(result.text.startsWith('eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ')).toBe(true);
 	});
 
     test('Should trigger precise validation error', async () => {
@@ -92,4 +92,34 @@ describe('Signup /', () => {
 
 		expect(result.body.error[0]).toBe('Password must be at least 6 characters');
 	});
+
+	
 }); 
+describe('Middleware /', () => {
+		test('Authorization middleware should work', async () => {
+			const result = await request(app)
+				.get('/authtest')
+				.send() // ✅ No need for JSON.stringify()
+				.set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ.eyJ1c2VySWQiOjF9.A-OCTQh3VpIJMINmMpaGUm3BJOtbHYmIkbuCZlA36QU')
+				.expect(200);
+
+			expect(result.body.email).toBe("constructor@dwati.com");
+		});
+		test('Authorization middleware should not work with tampered token', async () => {
+			const result = await request(app)
+				.get('/authtest')
+				.send() // ✅ No need for JSON.stringify()
+				.set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ.eyJ1c2VySWQiOjF9.ZZOCTQh3VpIJMINmMpaGUm3BJOtbHYmIkbuZlA36ZZ')
+				.expect(401);
+
+			expect(result.body.error_message).toBe("Unauthorized");
+		});
+		test('Authorization middleware should not work if token is missing', async () => {
+			const result = await request(app)
+				.get('/authtest')
+				.send() // ✅ No need for JSON.stringify()
+				.expect(422);
+
+			expect(result.body.error_message).toBe("Unprocessable entity");
+		});
+})

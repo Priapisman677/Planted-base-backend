@@ -1,19 +1,17 @@
 import express from 'express';
-import router from './user-routes.js';
+import userRouter from './user-router.js';
+import itemRouter from './item-router.js';
 import { PrismaClient } from '@prisma/client';
 import { errorMiddleWare } from '../middlewares/express-error-middleware.js';
 
 const app = express();
 app.use(express.json());
-app.use(router);
+app.use(userRouter);
+app.use(itemRouter);
 
 export const prisma = new PrismaClient({
 	log: ['query'],
-	// datasources: {
-	//     db: {
-	//         url:
-	//     }
-	// }
+
 });
 
 

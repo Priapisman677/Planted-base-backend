@@ -13,26 +13,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
+// enum Tags {
+//   Resource
+//   Consumable
+//   Equipment
+//   Electronics
+//   Energy
+// }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String @unique
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
   password  String
-  name String
-  salt String
+  name      String
+  salt      String
+  //! Should make more specific roles for each type of "worker".
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@map("users")
 }
 
-// model Item {
-//   id       Int    @id @default(autoincrement())
-//   quantity Int
-//   itemName String
-//   name     String
-//   zone     String
-//   weight   Int
-//   userId  Int
-//   user     User   @relation(fields: [userId], references: [id])
-//   @@map("items")
-// }
+model Item {
+  id          Int         @id @default(autoincrement())
+  name        String @unique
+  description String
+  quantity    Int
+  zone        String
+  weight      Int
+  createdAt   DateTime    @default(now())
+  updatedAd   DateTime    @updatedAt
+  ItemToTag   ItemToTag[]
+
+  // userId  Int
+  // user     User   @relation(fields: [userId], references: [id])
+  @@map("items")
+}
+
+model Tag {
+  id        Int         @id @default(autoincrement())
+  name      String
+  ItemToTag ItemToTag[]
+  @@map("tags")
+}
+
+model ItemToTag {
+  tagId  Int
+  tag    Tag  @relation(fields: [tagId], references: [id])
+  itemId Int
+  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@id([tagId, itemId])
+}
