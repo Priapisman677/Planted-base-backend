@@ -9,10 +9,7 @@ app.use(express.json());
 app.use(userRouter);
 app.use(itemRouter);
 
-export const prisma = new PrismaClient({
-	log: ['query'],
-
-});
+export const prisma = new PrismaClient({});
 
 
 //$ Whenever a controller will throw an exception, this middleware will be called.

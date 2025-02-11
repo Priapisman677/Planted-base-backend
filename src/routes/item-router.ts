@@ -9,6 +9,9 @@ import {overviewerAuthMiddleware, workerRoleAuthMiddleware} from '../middlewares
 
 const router = Router()
 
+
+//% Remember that to perform certain actions of specifically tagged items you need to be logged in as a specific role. You can log in as overviewer to have access to everything.
+
 //prettier-ignore
 router.post('/registernewitem',
     errorAndValidationHandler(authMiddleware, tokenSchema),
@@ -33,12 +36,14 @@ router.get('/finditembyname',
 //prettier-ignore
 router.get('/finditemspertag',
     errorAndValidationHandler(authMiddleware, tokenSchema),
+    errorAndValidationHandler(workerRoleAuthMiddleware),
     errorAndValidationHandler(findItemsPerTag));
 
 
 //prettier-ignore
 router.get('/updateitem',
     errorAndValidationHandler(authMiddleware, tokenSchema),
+    errorAndValidationHandler(workerRoleAuthMiddleware),
     errorAndValidationHandler(updateItem, updateItemSchema));
 
 

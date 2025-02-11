@@ -56,6 +56,6 @@ export class UnauthorizedException  extends HttpException {
 export class UnauthorizedRole extends HttpException {
 
     constructor(message: string, errorCode: ErrorCode){
-        super(message, errorCode, 422, null )
+        super(message, errorCode, 401, null )
     }
 }

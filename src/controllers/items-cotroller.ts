@@ -40,16 +40,12 @@ export const registerNewItem = async (req: Request<{}, {}, ItemSchemaType>, res:
     res.send(item);
 };
 
-
-
 //prettier-ignore
 export const listAllItems = async (req: Request, res: Response) =>{
 
 	const user: User  = (req as any).user;
 
 	const tagAcces = user.accesTo
-
-	console.log("User can access tags:", tagAcces);
 
     const items = await prisma.item.findMany({
 		where: {
@@ -86,21 +82,30 @@ export const findItemByName = async (req: Request<{}, {}, FindItemByNameSchemaTy
 
 	const tagAcces = user.accesTo
 
-	console.log("User can access tags:", tagAcces);
-
 	const name = req.body.name;
 
 	if (!name) {
 		throw new BadRequestsException('Item name is required',ErrorCode.ITEM_NAME_REQUIRED);
 	}
 
-	const item = await prisma.item.findFirst({
+	const item = await prisma.item.findMany({
 		where: {
 			name: name.toLocaleLowerCase(),
+			ItemToTag: {
+				
+				every: { //$ Honestly I've not worked a lot with every and some (or many-to-many). Be careful.
+					tag: {//$ This logic filters role-wise
+						name: {
+							in: tagAcces
+						}
+					}
+				}
+			}
 		},
+		
 	});
 
-	if (!item) {
+	if (item.length	=== 0) {
 		throw new BadRequestsException('Item not found', ErrorCode.ITEM_NOT_FOUND);
 	}
 
@@ -109,7 +114,13 @@ export const findItemByName = async (req: Request<{}, {}, FindItemByNameSchemaTy
 
 //prettier-ignore
 export const findItemsPerTag = async (req: Request, res: Response) => {
+	const user: User = (req as any).user;
+
+	const tagAcces = user.accesTo
+
 	const name = req.body.tagName;
+
+
 	if (!name) {
 		throw new BadRequestsException('Tag name is required', ErrorCode.TAG_NAME_REQUIRED)
 	}
@@ -120,13 +131,25 @@ export const findItemsPerTag = async (req: Request, res: Response) => {
 			ItemToTag: {
 				some: {
 					tag: {
-						name, // Replace with your desired tag name
+						name: name.toLocaleLowerCase(), // Replace with your desired tag name
 					},
 				},
+
+				every: {
+					tag: {
+						name: {
+							in: tagAcces
+						}
+					}
+				}
 			},
 		},
 		include: { ItemToTag: { include: { tag: true } } },
 	});
+
+	if (itemsForTag.length === 0) {
+		throw new BadRequestsException('Item not found', ErrorCode.ITEM_NOT_FOUND);
+	}
 
 	res.send(itemsForTag);
 };
@@ -142,10 +165,23 @@ export const deleteItem = (_req: Request, _res: Response) =>{
 export const updateItem = async (req: Request<{}, {}, UpdateItemSchemaType>, res: Response) => {
 	const { name, quantity, action } = req.body;
 
+	const user: User = (req as any).user;
+
+	const tagAcces = user.accesTo
+
     //$ Here we will check both if the item exists and we will know what is the current quantity.
     const item = await prisma.item.findUnique({
         where: {
-            name: name.toLowerCase()
+            name: name.toLowerCase(),
+			ItemToTag: {
+				some: { 
+					tag: {
+						name: {
+							in: tagAcces
+						}
+					}
+				}
+			}
         }
     })
 
@@ -171,11 +207,6 @@ export const updateItem = async (req: Request<{}, {}, UpdateItemSchemaType>, res
         }
         
     }
-
-    	// Prevent unnecessary updates
-	if (modifyBy === 0) {
-		return res.send({ warning: 'No change in quantity' });
-	}
 
 	const update = await prisma.item.updateManyAndReturn({
 		where: {
