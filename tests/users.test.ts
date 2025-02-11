@@ -2,8 +2,8 @@
 import { describe, it, expect, vi, beforeEach, afterAll, test, beforeAll } from "vitest";
 import request from 'supertest';
 import app, { prisma } from '../src/routes/app-setup.ts';
-import { paikyGetRandomSalt, paikyHash } from "../src/utils/salt-password.ts";
-import { paikyJWTsign } from "../src/utils/jwt.ts";
+import { paikyGetRandomSalt, paikyHash } from "../src/utils/crypto/salt-password.ts";
+import { paikyJWTsign } from "../src/utils/crypto/jwt.ts";
 
 //! This test file should be independent of items tests. Meaning that the outcome of items tests should not interfere with this test file.
 

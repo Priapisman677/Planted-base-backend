@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../routes/app-setup.js';
-import {paikyHash, paikyCompare, paikyGetRandomSalt} from '../utils/salt-password.js';
-import { paikyJWTsign } from '../utils/jwt.js';
+import {paikyHash, paikyCompare, paikyGetRandomSalt} from '../utils/crypto/salt-password.js';
+import { paikyJWTsign } from '../utils/crypto/jwt.js';
 import dotenv from 'dotenv'
 import { BadRequestsException, ErrorCode } from '../exeptions/exceptions.js';
 import { LoginSchemaType, SignupSchemaType } from '../validator-schemas/user-schemas.js';
@@ -20,7 +20,7 @@ export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Respon
 		});
 
 		const a = ''
-		
+
 		if (user) {
 			//% If you don't understand what is going on here I would recommend you:
 			//% 1. Know that this signup CONTROLLER is wrapped inside of "internalErrorHandler()" that is defined in "internal-exeption.ts".

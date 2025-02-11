@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ErrorCode, UnauthorizedException } from '../exeptions/exceptions.js';
-import { paikyJWTVerify } from '../utils/jwt.js';
+import { paikyJWTVerify } from '../utils/crypto/jwt.js';
 import { prisma } from '../routes/app-setup.js';
 
 export const authMiddleware = async (req: Request, _res: Response, next: NextFunction)=>{
