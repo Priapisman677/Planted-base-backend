@@ -20,7 +20,6 @@ export const errorAndValidationHandler = (func: expressFunction, schema?: AnyZod
            
 			await func(req, res, next); //$ Currently our controllers don't call "next". Because that is already being handled on line ¿36?
 		} catch (e) {
-            debugger
             let exception 
             if(e instanceof HttpException){
                 e.error 

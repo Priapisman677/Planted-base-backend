@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ErrorCode, UnauthorizedException } from '../exeptions/exceptions.js';
-import { paikyJWTVerify } from '../utils/crypto/jwt.js';
+import comet from '../utils/crypto/index.js';
 import { prisma } from '../routes/app-setup.js';
 
 export const authMiddleware = async (req: Request, _res: Response, next: NextFunction)=>{
@@ -13,7 +13,7 @@ export const authMiddleware = async (req: Request, _res: Response, next: NextFun
         return
     }
     //$ This is my custom HMAC function. If it is successful it will return a user id, if it's not it will return "null".
-    const userId = paikyJWTVerify(token, process.env.SECRET!)
+    const userId = comet.cometJWTVerify(token, process.env.SECRET!)
     if(!userId){
         throw new UnauthorizedException('Unauthorized', ErrorCode.UNAUTHORIZED)
     }

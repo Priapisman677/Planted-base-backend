@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../routes/app-setup.js';
-import {paikyHash, paikyCompare, paikyGetRandomSalt} from '../utils/crypto/salt-password.js';
-import { paikyJWTsign } from '../utils/crypto/jwt.js';
+import comet from '../utils/crypto/index.js';
 import dotenv from 'dotenv'
 import { BadRequestsException, ErrorCode } from '../exeptions/exceptions.js';
 import { LoginSchemaType, SignupSchemaType } from '../validator-schemas/user-schemas.js';
@@ -19,7 +18,6 @@ export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Respon
 			},
 		});
 
-		const a = ''
 
 		if (user) {
 			//% If you don't understand what is going on here I would recommend you:
@@ -30,17 +28,17 @@ export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Respon
 		}
 
 
-        const salt = paikyGetRandomSalt()
+        const salt = comet.cometGetRandomSalt()
         user = await prisma.user.create({
             data: {
                 email,
                 name,
-                password: paikyHash(password, salt),
+                password: comet.cometHash(password, salt),
                 salt,
 				role
             }
         })
-        res.send(paikyJWTsign({userId: user.id}, process.env.SECRET!))
+        res.send(comet.cometJWTsign({userId: user.id}, process.env.SECRET!))
 };
 
 
@@ -57,11 +55,11 @@ export const login = async (req: Request<{}, {}, LoginSchemaType>, res: Response
 
 		if (!user) throw new BadRequestsException('User not found', ErrorCode.USER_NOT_FOUND)
 		
-        const result = paikyCompare(  password, user.salt,  user.password)
+        const result = comet.cometCompare(  password, user.salt,  user.password)
 
         if (!result) throw new BadRequestsException('Invalid password', ErrorCode.INCORRECT_PASSWORD)
 
-        res.send(paikyJWTsign({userId: user.id}, process.env.SECRET!))
+        res.send(comet.cometJWTsign({userId: user.id}, process.env.SECRET!))
 
        //!-----------------------------------------------------------------------------------
 

@@ -6,12 +6,12 @@
 
 import crypto from 'node:crypto';
 
-export const paikyGetRandomSalt = ()=>{
+export const cometGetRandomSalt = ()=>{
     return crypto.randomBytes(16).toString('hex')
 }
 
 
-export const paikyHash = (password: string, salt: string): string => {
+export const cometHash = (password: string, salt: string): string => {
     console.time('1')
     
 	const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha-256').toString('hex') //$ Output hex to be stored.
@@ -19,10 +19,10 @@ export const paikyHash = (password: string, salt: string): string => {
 	return hash;
 };
 
-export const paikyCompare = (password: string, salt: string, storedHash: string): Boolean => {
+export const cometCompare = (password: string, salt: string, storedHash: string): Boolean => {
 
 	//$ Here I'm basically a recycling the function above.
-	const bufferFromInboundPass = Buffer.from(paikyHash(password, salt), 'hex');
+	const bufferFromInboundPass = Buffer.from(cometHash(password, salt), 'hex');
     const bufferFromStoredHash = Buffer.from(storedHash, 'hex')
 
     if (bufferFromInboundPass.length !== bufferFromStoredHash.length){

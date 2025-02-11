@@ -6,7 +6,7 @@ interface excractedPayload {
 
 
 //prettier-ignore
-export const paikyJWTsign = (payolad: {userId: number}, secret: string): string =>{
+export const cometJWTsign = (payolad: {userId: number}, secret: string): string =>{
     const payload = JSON.stringify(payolad)
     const headers = JSON.stringify({ alg: 'HS256', type: 'jwt' });
 	const base64payload = Buffer.from(payload, 'utf-8').toString('base64url')
@@ -20,7 +20,7 @@ export const paikyJWTsign = (payolad: {userId: number}, secret: string): string 
 }
 
 //prettier-ignore
-export const paikyJWTVerify = (token: string, secret: string):number|null =>{
+export const cometJWTVerify = (token: string, secret: string):number|null =>{
 
     const tokenNoBearer = token.split(' ')[1]
     

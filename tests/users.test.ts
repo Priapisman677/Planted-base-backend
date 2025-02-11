@@ -2,8 +2,8 @@
 import { describe, it, expect, vi, beforeEach, afterAll, test, beforeAll } from "vitest";
 import request from 'supertest';
 import app, { prisma } from '../src/routes/app-setup.ts';
-import { paikyGetRandomSalt, paikyHash } from "../src/utils/crypto/salt-password.ts";
-import { paikyJWTsign } from "../src/utils/crypto/jwt.ts";
+import comet from "../src/utils/crypto/index.ts";
+
 
 //! This test file should be independent of items tests. Meaning that the outcome of items tests should not interfere with this test file.
 
@@ -19,12 +19,12 @@ beforeAll(async () => {
 	});
 
 	
-	const salt = paikyGetRandomSalt()
+	const salt = comet.cometGetRandomSalt()
 	user = await prisma.user.create({
 		data: {
 			email: 'constructor@dwati.com',
 			name: 'constructor',
-			password: paikyHash('minecraft67', salt),
+			password: comet.cometHash('minecraft67', salt),
 			salt: salt,
 			role: 'OVERVIEWER',
 		},
@@ -119,7 +119,7 @@ describe('Middleware /', () => {
 		test('Authorization middleware should work', async () => {
 
             //% The token will always be different because the user id changes each test.
-			const token = paikyJWTsign({userId: user.id}, process.env.SECRET!)
+			const token = comet.cometJWTsign({userId: user.id}, process.env.SECRET!)
 
 			const result = await request(app)
 				.get('/authtest')
