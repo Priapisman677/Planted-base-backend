@@ -28,9 +28,9 @@ export const overviewerAuthMiddleware = (req: Request, _res: Response, next: Nex
 export const workerRoleAuthMiddleware = (req: Request, _res: Response, next: NextFunction)=>{
 	const user = (req as any).user as User;
 
-    
-    // Here’s a simple role-to-tag relationship based on the item tags:
+    //$ All this really does is that it modifies the request to pass the tags that a user is able to modify based on its role.
 
+    // Here’s a simple role-to-tag relationship based on the item tags:
     // Engineer → Equipment, Electronics, Energy
     // Worker → Resource, Consumable
     // Medic → Consumable (specifically for medical-related items like Medical Supplies)

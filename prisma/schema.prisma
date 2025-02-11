@@ -29,7 +29,8 @@ model User {
   salt      String
   //! Should make more specific roles for each type of "worker".
   role      Role     @default(VISITOR)
-  locker    Personal_Quarter[]
+  quarter    Personal_Quarter[]
+  //defaultQuarter Personal_Quarter 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -43,7 +44,7 @@ model Personal_Quarter {
   userId          Int
   user            User     @relation(fields: [userId], references: [id])
   claimedAt       DateTime @default(now())
-  lastTimeAccesed DateTime @updatedAt
+  modifiedAt       DateTime @updatedAt
 
   @@map("personal_quarter")
 }

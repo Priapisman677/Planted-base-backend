@@ -24,7 +24,8 @@ export enum ErrorCode {
     ITEM_NAME_REQUIRED =  1008,
     ITEM_NOT_FOUND =  1009,
     UNAUTHORIZED_ROLE = 1010,
-    ITEM_ALREADY_EXISTS = 1011
+    ITEM_ALREADY_EXISTS = 1011,
+    QUARTER_NOT_FOUND = 1012,
 }
 
 //* Exceptions:

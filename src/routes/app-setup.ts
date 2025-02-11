@@ -1,6 +1,7 @@
 import express from 'express';
 import userRouter from './user-router.js';
 import itemRouter from './item-router.js';
+import quarterRouter from './quarter-routes.js';
 import { PrismaClient } from '@prisma/client';
 import { errorMiddleWare } from '../middlewares/express-error-middleware.js';
 
@@ -8,6 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(userRouter);
 app.use(itemRouter);
+app.use(quarterRouter);
 
 export const prisma = new PrismaClient({});
 
