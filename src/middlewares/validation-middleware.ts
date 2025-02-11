@@ -23,7 +23,7 @@
 
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
-import { ErrorCode, UnprocessableEntity } from '../exeptions/root-HttpException.js';
+import { ErrorCode, UnprocessableEntity } from '../exeptions/exceptions.js';
 
 
 

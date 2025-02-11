@@ -13,6 +13,22 @@ export const itemSchema = z.object({
 export type ItemSchemaType = z.infer<typeof itemSchema>['body']
 
 
+
+
+
+
+export const findItemByNameSchema = z.object({
+    body: z.object({
+        name: z.string({required_error: 'Name is required'}).nonempty('Name cannot be empty'),
+    })
+})
+
+export type FindItemByNameSchemaType = z.infer<typeof updateItemSchema>['body']
+
+
+
+
+
 export const itemToTagSchema = z.object({
     body: z.object({
         tagId: z.number({required_error: 'TagId is required'}),
@@ -22,11 +38,14 @@ export const itemToTagSchema = z.object({
 
 export type ItemToTagSchemaType = z.infer<typeof itemToTagSchema>['body']
 
+
+
+
 export const updateItemSchema = z.object({
     body: z.object({
         name: z.string({required_error: 'Name is required'}).nonempty('Name cannot be empty'),
         quantity: z.number({required_error: 'Quantity is required'}).nonnegative('Quantity should not be negative'),
-        action: z.enum(['dec', 'inc'], {required_error: 'Action name is required'})
+        action: z.enum(['store', 'take'], {required_error: 'Action name is required'})
     })
 })
 

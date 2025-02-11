@@ -1,5 +1,5 @@
 //prettier-ignore
-import {ErrorCode,HttpException,InternalException,UnprocessableEntity,} from '../exeptions/root-HttpException.js';
+import {ErrorCode,HttpException,InternalException,UnprocessableEntity,} from '../exeptions/exceptions.js';
 import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject, ZodError, ZodString } from 'zod';
 
@@ -33,7 +33,6 @@ export const errorAndValidationHandler = (func: expressFunction, schema?: AnyZod
                     "Something went wrong: internal exception", ErrorCode.INTERNAL_EXCEPTION, e
                 )
             }
-            console.log(exception);
             next(exception); //$ What express does when it noticed that you call next() and you passed an error object is: it will trigger the express error middleware defined at express-error-middleware.ts And that middleware will have access to the error object.
         }
 	};

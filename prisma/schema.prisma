@@ -14,17 +14,12 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
-  USER
+  VISITOR
+  ENGINEER
+  WORKER
+  MEDIC
 }
 
-// enum Tags {
-//   Resource
-//   Consumable
-//   Equipment
-//   Electronics
-//   Energy
-// }
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -33,7 +28,7 @@ model User {
   name      String
   salt      String
   //! Should make more specific roles for each type of "worker".
-  role      Role     @default(USER)
+  role      Role     @default(VISITOR)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -48,7 +43,7 @@ model Item {
   zone        String
   weight      Int
   createdAt   DateTime    @default(now())
-  updatedAd   DateTime    @updatedAt
+  updatedAt   DateTime    @updatedAt
   ItemToTag   ItemToTag[]
 
   // userId  Int

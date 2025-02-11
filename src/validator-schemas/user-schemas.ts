@@ -6,7 +6,7 @@ export const SignupSchema = z.object({
 		name: z.string({required_error: 'Name is required'}).nonempty('Name cannot be empty'),
 		email: z.string({ required_error: "Email is required",  }).email('Email is not valid').nonempty('Email cannot be empty'), 
 		password: z.string({required_error: 'Password is required'}).min(6, 'Password must be at least 6 characters').nonempty('Password cannot be empty'),
-		isAdmin: z.boolean()
+		role: z.enum(['ENGINEER', 'WORKER', 'MEDIC', 'VISITOR'], {required_error: 'Role is required'}),
 	}),
 })//! .strict();      If I were to enable a strict mode here it would say that all the other properties that come with your request are invalid.
 
