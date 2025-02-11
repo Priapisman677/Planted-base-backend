@@ -33,5 +33,10 @@
 		"node_modules",
 		"vitest.config.ts",
 		"tests"
+	],
+
+	"include": [
+		"src",
+		"tests"
 	]
 }

@@ -43,3 +43,75 @@ Prisma can definitely take a look into these files and get connected to the spec
 
 { "itemId": 10, "tagId": 5 }  // Energy Cell → Energy
 { "itemId": 10, "tagId": 2 }  // Energy Cell → Consumable
+
+
+
+
+
+
+Here’s a simple role-to-tag relationship based on the item tags:
+
+Engineer → Equipment, Electronics, Energy
+Worker → Resource, Consumable
+Medic → Consumable (specifically for medical-related items like Medical Supplies)
+This setup ensures:
+
+Engineers handle technical and mechanical components.
+Workers manage general resources and consumables.
+Medics handle medical-related consumables.
+Let me know if you need adjustments!
+
+
+
+
+
+
+
+
+
+
+
+[
+  {
+    "name": "Hiroshi Tanaka",
+    "email": "hiroshi.tanaka@space.com",
+    "password": "FixItSamurai42",
+    "role": "ENGINEER"
+  },
+  {
+    "name": "Amara Okafor",
+    "email": "amara.okafor@space.com",
+    "password": "OreFinder5000",
+    "role": "WORKER"
+  },
+  {
+    "name": "Luca Moretti",
+    "email": "luca.moretti@space.com",
+    "password": "WrenchTornado!",
+    "role": "ENGINEER"
+  },
+  {
+    "name": "Javier Gómez",
+    "email": "javier.gomez@space.com",
+    "password": "ShovelKing999",
+    "role": "WORKER"
+  },
+  {
+    "name": "Aisha Khan",
+    "email": "aisha.khan@space.com",
+    "password": "HealingHands007",
+    "role": "MEDIC"
+  },
+  {
+    "name": "Viktor Petrov",
+    "email": "viktor.petrov@space.com",
+    "password": "EnergyBoosterXL",
+    "role": "ENGINEER"
+  },
+  {
+    "name": "Chen Wei",
+    "email": "chen.wei@space.com",
+    "password": "SolarTechMaster",
+    "role": "ENGINEER"
+  }
+]

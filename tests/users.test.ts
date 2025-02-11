@@ -2,22 +2,33 @@
 import { describe, it, expect, vi, beforeEach, afterAll, test, beforeAll } from "vitest";
 import request from 'supertest';
 import app, { prisma } from '../src/routes/app-setup.ts';
+import { paikyGetRandomSalt, paikyHash } from "../src/utils/salt-password.ts";
 
-//! I need to allow the startup to be able to test out of the box.
+//! This test file should be independent of items tests. Meaning that the outcome of items tests should not interfere with this test file.
+
 
 beforeAll(async () => {
-
-
-	
-
 	const deleted = await prisma.user.deleteMany({
 		where: {
 			email: 'Carlos@asda.com',
 		},
 	});
 
+	const salt = paikyGetRandomSalt()
+	const password = paikyHash('SolarTechMaster', salt)
+	
 
+	const user = await prisma.user.create({
+		data: {
+			email: 'Carlos@asda.com',
+			password: '',
+			salt: 'pepper',
+			name: 'Carlos',
+			role: 'ENGINEER',
+		},
+	});
 });
+
 
 describe('Login /', () => {
     test('Should Be able to log in', async () => {
@@ -64,19 +75,19 @@ describe('Login /', () => {
 
 describe('Signup /', () => {
     
-	// test('Should receive an error if trying to take existing user', async () => {
-	// 	//prettier-ignore
-	// 	const result = await request(app)
-	// 		.post('/signup')
-	// 		.send({email: 'constructor@dwati.com',password: 'Carbon7',name: 'Constructor', isAdmin: false})
-	// 		.set('Content-Type', 'application/json');
+	test('Should receive an error if trying to take existing user', async () => {
+		//prettier-ignore
+		const result = await request(app)
+			.post('/signup')
+			.send({email: 'chzieSn.wei@space.com',password: 'Carbon7', name: 'Constructor', role: 'ENGINEER'})
+			.set('Content-Type', 'application/json');
 
-	// 	expect(result.body).toEqual({
-	// 		error_message: 'User already exists',
-	// 		errorCode: 1002,
-	// 		error: null,
-	// 	});
-	// });
+		expect(result.body).toEqual({
+			error_message: 'User already exists',
+			errorCode: 1002,
+			error: null,
+		});
+	});
 
 	test('Should be able to sign up successfully', async () => {
 		//prettier-ignore
@@ -86,18 +97,18 @@ describe('Signup /', () => {
 			.set('Content-Type', 'application/json')
 			.expect(200);
 
-		// expect(result.text.startsWith('eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ')).toBe(true);
+		expect(result.text.startsWith('eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ')).toBe(true);
 	});
 
-    // test('Should trigger precise validation error', async () => {
-	// 	//prettier-ignore
-	// 	const result = await request(app)
-	// 		.post('/signup')
-	// 		.send({email: 'carlos@dwati.com',password: 'Carbo',name: 'Constructor',})
-	// 		.set('Content-Type', 'application/json');
+    test('Should trigger precise validation error', async () => {
+		//prettier-ignore
+		const result = await request(app)
+			.post('/signup')
+			.send({email: 'carlos@dwati.com',password: 'Carbo',name: 'Constructor',})
+			.set('Content-Type', 'application/json');
 
-	// 	expect(result.body.error[0]).toBe('Password must be at least 6 characters');
-	// });
+		expect(result.body.error[0]).toBe('Password must be at least 6 characters');
+	});
 
 	
 }); 

@@ -15,6 +15,6 @@ export default defineConfig({
 			concurrent: false, // Ensure tests run one after another
 		},
 
-		// include: ['tests/socket-io-three.test.ts', 'tests/api.test.ts'],
+		include: ['tests/users.test.ts', 'tests/items.test.ts'],
 	},
 });

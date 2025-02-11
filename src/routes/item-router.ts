@@ -4,7 +4,7 @@ import authMiddleware from '../middlewares/auth-middleware.js';
 import {  findItemByName, findItemsPerTag, listAllItems, registerNewItem, updateItem } from '../controllers/items-cotroller.js';
 import {findItemByNameSchema, itemSchema, updateItemSchema} from '../validator-schemas/item-schemas.js';
 import { tokenSchema } from '../validator-schemas/token-schema.js';
-import overviewerAuthMiddleware from '../middlewares/role-auth-middleware.js';
+import {overviewerAuthMiddleware, workerRoleAuthMiddleware} from '../middlewares/role-auth-middleware.js';
 
 
 const router = Router()
@@ -19,19 +19,21 @@ router.post('/registernewitem',
 //prettier-ignore
 router.get('/listallitems',
     errorAndValidationHandler(authMiddleware, tokenSchema),
+    errorAndValidationHandler(workerRoleAuthMiddleware),
     errorAndValidationHandler(listAllItems));
 
 
 //prettier-ignore
 router.get('/finditembyname',
     errorAndValidationHandler(authMiddleware, tokenSchema),
-    errorAndValidationHandler(findItemByName, findItemByNameSchema));
+    errorAndValidationHandler(workerRoleAuthMiddleware),
+    errorAndValidationHandler(findItemByName, findItemByNameSchema))
 
 
 //prettier-ignore
 router.get('/finditemspertag',
     errorAndValidationHandler(authMiddleware, tokenSchema),
-errorAndValidationHandler(findItemsPerTag));
+    errorAndValidationHandler(findItemsPerTag));
 
 
 //prettier-ignore

@@ -4,6 +4,7 @@ import { prisma } from '../routes/app-setup.js';
 import { FindItemByNameSchemaType, ItemSchemaType, UpdateItemSchemaType } from '../validator-schemas/item-schemas.js';
 //prettier-ignore
 import { BadRequestsException, ErrorCode } from '../exeptions/exceptions.js';
+import { User } from '../middlewares/role-auth-middleware.js';
 
 //prettier-ignore
 export const registerNewItem = async (req: Request<{}, {}, ItemSchemaType>, res: Response) => {
@@ -39,29 +40,54 @@ export const registerNewItem = async (req: Request<{}, {}, ItemSchemaType>, res:
     res.send(item);
 };
 
-//prettier-ignore
-//! Gotta get rid of this controller, all newly stored items should be tagged to begin with.
-// export const tagItem = async (req: Request<{}, {}, ItemToTagSchemaType>, res: Response) => {
-// 	const {tagId, itemId} = req.body;
 
-// 	const itemToTag = await prisma.itemToTag.create({ 
-//         data: {
-// 			tagId,
-// 			itemId
-// 		}
-//      });
-
-//     res.send(itemToTag);
-// };
 
 //prettier-ignore
-export const listAllItems = async (_req: Request, res: Response) =>{
-    const items = await prisma.item.findMany({});
+export const listAllItems = async (req: Request, res: Response) =>{
+
+	const user: User  = (req as any).user;
+
+	const tagAcces = user.accesTo
+
+	console.log("User can access tags:", tagAcces);
+
+    const items = await prisma.item.findMany({
+		where: {
+			ItemToTag: {
+				
+				every: { //$ Honestly I've not worked a lot with every and some (or many-to-many). Be careful.
+					tag: {
+						name: {
+							in: tagAcces
+						}
+					}
+				}
+			}
+		},
+		include: {
+			ItemToTag: {
+				select: {
+					tag: {
+						select: {
+							name: true
+						}
+					}
+				}
+			}
+		}
+	});
     res.send(items);
 }
 
 //prettier-ignore
 export const findItemByName = async (req: Request<{}, {}, FindItemByNameSchemaType>,res: Response) => {
+
+	const user: User = (req as any).user;
+
+	const tagAcces = user.accesTo
+
+	console.log("User can access tags:", tagAcces);
+
 	const name = req.body.name;
 
 	if (!name) {
