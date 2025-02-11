@@ -29,10 +29,23 @@ model User {
   salt      String
   //! Should make more specific roles for each type of "worker".
   role      Role     @default(VISITOR)
+  locker    Personal_Quarter[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+model Personal_Quarter {
+  id              Int      @id @default(autoincrement())
+  lockerCapacity  Int
+  zone            String
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
+  claimedAt       DateTime @default(now())
+  lastTimeAccesed DateTime @updatedAt
+
+  @@map("personal_quarter")
 }
 
 model Item {
