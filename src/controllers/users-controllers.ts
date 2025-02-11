@@ -4,7 +4,8 @@ import {paikyHash, paikyCompare, paikyGetRandomSalt} from '../utils/salt-passwor
 import { paikyJWTsign } from '../utils/jwt.js';
 import dotenv from 'dotenv'
 import { BadRequestsException, ErrorCode } from '../exeptions/exceptions.js';
-import { SignupSchemaType, TokenSchemaType } from '../validator-schemas/user-schemas.js';
+import { LoginSchemaType, SignupSchemaType } from '../validator-schemas/user-schemas.js';
+import { TokenSchemaType } from '../validator-schemas/token-schema.js';
 dotenv.config()
 
 
@@ -42,7 +43,7 @@ export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Respon
 
 
 
-export const login = async (req: Request<{}, {}, SignupSchemaType>, res: Response) => {
+export const login = async (req: Request<{}, {}, LoginSchemaType>, res: Response) => {
 	
 		const { email, password } = req.body;
         //! This should be middleware but I'll wait for the Indian guy to say it------------
@@ -65,12 +66,8 @@ export const login = async (req: Request<{}, {}, SignupSchemaType>, res: Respons
 };
 
 export const authtest = async (req: Request<{}, {}, TokenSchemaType>, res: Response) => {
-	const id = (req as any).body.userId;
-	const user = await prisma.user.findUnique({
-		where: {
-			id
-		}
-	})
+	const user = (req as any).user;
+	
 	res.send(user)
 
 };

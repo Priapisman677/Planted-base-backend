@@ -22,7 +22,9 @@ export enum ErrorCode {
     UNAUTHORIZED = 1006,
     TAG_NAME_REQUIRED =  1007,
     ITEM_NAME_REQUIRED =  1008,
-    ITEM_NOT_FOUND =  1009
+    ITEM_NOT_FOUND =  1009,
+    UNAUTHORIZED_ROLE = 1010,
+    ITEM_ALREADY_EXISTS = 1011
 }
 
 //* Exceptions:
@@ -48,5 +50,12 @@ export class InternalException  extends HttpException {
 export class UnauthorizedException  extends HttpException {
     constructor(message: string, errorCode: ErrorCode){
         super(message, errorCode,  401, null)
+    }
+}
+
+export class UnauthorizedRole extends HttpException {
+
+    constructor(message: string, errorCode: ErrorCode){
+        super(message, errorCode, 422, null )
     }
 }

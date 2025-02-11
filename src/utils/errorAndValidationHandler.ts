@@ -18,10 +18,11 @@ export const errorAndValidationHandler = (func: expressFunction, schema?: AnyZod
                  schema.parse(req) //$ Running Zod validation here.
             }
            
-			await func(req, res, next); //$ Currently our controllers don't call "next". Because that is already being handled on line ¿41?
+			await func(req, res, next); //$ Currently our controllers don't call "next". Because that is already being handled on line ¿36?
 		} catch (e) {
             let exception 
             if(e instanceof HttpException){
+                e.error 
                 exception = e
             }else if(e instanceof ZodError){
                 exception = new UnprocessableEntity(

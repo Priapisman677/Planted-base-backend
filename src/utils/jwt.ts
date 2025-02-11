@@ -1,5 +1,10 @@
 import crypto from 'node:crypto';
 
+interface excractedPayload {
+    userId: number
+}
+
+
 //prettier-ignore
 export const paikyJWTsign = (payolad: {userId: number}, secret: string): string =>{
     const payload = JSON.stringify(payolad)
@@ -15,7 +20,7 @@ export const paikyJWTsign = (payolad: {userId: number}, secret: string): string 
 }
 
 //prettier-ignore
-export const paikyJWTVerify = (token: string, secret: string): string|null =>{
+export const paikyJWTVerify = (token: string, secret: string):number|null =>{
 
     const tokenNoBearer = token.split(' ')[1]
     
@@ -41,7 +46,7 @@ export const paikyJWTVerify = (token: string, secret: string): string|null =>{
         return null
     }
 
-    const excractedPayload = JSON.parse(Buffer.from(base64payload, 'base64url').toString('utf-8'))
+    const excractedPayload: excractedPayload = JSON.parse(Buffer.from(base64payload, 'base64url').toString('utf-8'))
 
     const userId = excractedPayload.userId
 

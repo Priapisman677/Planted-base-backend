@@ -1,33 +1,58 @@
 import { Request, Response } from 'express';
 import { prisma } from '../routes/app-setup.js';
 //prettier-ignore
-import { FindItemByNameSchemaType, ItemSchemaType, ItemToTagSchemaType, UpdateItemSchemaType } from '../validator-schemas/item-schemas.js';
+import { FindItemByNameSchemaType, ItemSchemaType, UpdateItemSchemaType } from '../validator-schemas/item-schemas.js';
 //prettier-ignore
 import { BadRequestsException, ErrorCode } from '../exeptions/exceptions.js';
 
 //prettier-ignore
-export const storeItem = async (req: Request<{}, {}, ItemSchemaType>, res: Response) => {
-	const data = req.body;
+export const registerNewItem = async (req: Request<{}, {}, ItemSchemaType>, res: Response) => {
+	
+	const {description, weight, zone, name, tagId} = req.body;
+
+	const checkForStoredItem = await prisma.item.findFirst({
+		where: {
+			name: name.toLowerCase()
+		}
+	})
+
+	if(checkForStoredItem){
+		throw new BadRequestsException('Item name exists, you should update the quantity instead', ErrorCode.ITEM_ALREADY_EXISTS)
+	}
 
 	const item = await prisma.item.create({ data: 
-        {...data,
-            name: req.body.name.toLowerCase()
+        {
+			description, 
+			weight,
+			zone,
+			name: name.toLowerCase()
         },
      });
+
+	 await prisma.itemToTag.create({
+		data: {
+			itemId: item.id,
+			tagId: tagId
+		}
+	 })
 
     res.send(item);
 };
 
 //prettier-ignore
-export const tagItem = async (req: Request<{}, {}, ItemToTagSchemaType>, res: Response) => {
-	const data = req.body;
+//! Gotta get rid of this controller, all newly stored items should be tagged to begin with.
+// export const tagItem = async (req: Request<{}, {}, ItemToTagSchemaType>, res: Response) => {
+// 	const {tagId, itemId} = req.body;
 
-	const itemToTag = await prisma.itemToTag.create({ 
-        data: data
-     });
+// 	const itemToTag = await prisma.itemToTag.create({ 
+//         data: {
+// 			tagId,
+// 			itemId
+// 		}
+//      });
 
-    res.send(itemToTag);
-};
+//     res.send(itemToTag);
+// };
 
 //prettier-ignore
 export const listAllItems = async (_req: Request, res: Response) =>{
@@ -50,7 +75,7 @@ export const findItemByName = async (req: Request<{}, {}, FindItemByNameSchemaTy
 	});
 
 	if (!item) {
-		throw new BadRequestsException('Item not found',ErrorCode.ITEM_NOT_FOUND);
+		throw new BadRequestsException('Item not found', ErrorCode.ITEM_NOT_FOUND);
 	}
 
 	res.send(item);

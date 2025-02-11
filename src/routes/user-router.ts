@@ -1,13 +1,11 @@
 import { Router } from 'express';
-import { authtest, login, signup } from '../controllers/auth-controllers.js';
+import { authtest, login, signup } from '../controllers/users-controllers.js';
 //prettier-ignore
-import { LoginSchema, SignupSchema, tokenSchema } from '../validator-schemas/user-schemas.js';
+import { LoginSchema, SignupSchema } from '../validator-schemas/user-schemas.js';
 //prettier-ignore
 import { errorAndValidationHandler } from '../utils/errorAndValidationHandler.js';
 import authMiddleware from '../middlewares/auth-middleware.js';
-
-
-
+import { tokenSchema } from '../validator-schemas/token-schema.js';
 
 const router = Router();
 
@@ -17,6 +15,7 @@ router.get('/login', errorAndValidationHandler(login, LoginSchema));
 
 //prettier-ignore
 router.get('/authtest',
-     errorAndValidationHandler(authMiddleware, tokenSchema), errorAndValidationHandler(authtest));
+     errorAndValidationHandler(authMiddleware, tokenSchema),
+     errorAndValidationHandler(authtest));
 
 export default router;

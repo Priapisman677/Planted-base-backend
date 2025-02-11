@@ -1,23 +1,43 @@
 import { Router } from 'express';
 import { errorAndValidationHandler } from '../utils/errorAndValidationHandler.js';
 import authMiddleware from '../middlewares/auth-middleware.js';
-import {  findItemByName, findItemsPerTag, listAllItems, storeItem, tagItem, updateItem } from '../controllers/items-cotroller.js';
-import {findItemByNameSchema, itemSchema, itemToTagSchema, updateItemSchema} from '../validator-schemas/item-schemas.js';
+import {  findItemByName, findItemsPerTag, listAllItems, registerNewItem, updateItem } from '../controllers/items-cotroller.js';
+import {findItemByNameSchema, itemSchema, updateItemSchema} from '../validator-schemas/item-schemas.js';
+import { tokenSchema } from '../validator-schemas/token-schema.js';
+import overviewerAuthMiddleware from '../middlewares/role-auth-middleware.js';
 
 
 const router = Router()
 
-router.post('/storeitem', errorAndValidationHandler(storeItem, itemSchema));
+//prettier-ignore
+router.post('/registernewitem',
+    errorAndValidationHandler(authMiddleware, tokenSchema),
+    errorAndValidationHandler(overviewerAuthMiddleware),
+    errorAndValidationHandler(registerNewItem, itemSchema));
 
-router.post('/tagitem', errorAndValidationHandler(tagItem, itemToTagSchema));
 
-router.get('/listallitems', errorAndValidationHandler(listAllItems));
+//prettier-ignore
+router.get('/listallitems',
+    errorAndValidationHandler(authMiddleware, tokenSchema),
+    errorAndValidationHandler(listAllItems));
 
-router.get('/finditembyname', errorAndValidationHandler(findItemByName, findItemByNameSchema));
 
-router.get('/finditemspertag', errorAndValidationHandler(findItemsPerTag));
+//prettier-ignore
+router.get('/finditembyname',
+    errorAndValidationHandler(authMiddleware, tokenSchema),
+    errorAndValidationHandler(findItemByName, findItemByNameSchema));
 
-router.get('/updateitem', errorAndValidationHandler(updateItem, updateItemSchema));
+
+//prettier-ignore
+router.get('/finditemspertag',
+    errorAndValidationHandler(authMiddleware, tokenSchema),
+errorAndValidationHandler(findItemsPerTag));
+
+
+//prettier-ignore
+router.get('/updateitem',
+    errorAndValidationHandler(authMiddleware, tokenSchema),
+    errorAndValidationHandler(updateItem, updateItemSchema));
 
 
 
