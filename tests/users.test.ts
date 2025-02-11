@@ -3,28 +3,30 @@ import { describe, it, expect, vi, beforeEach, afterAll, test, beforeAll } from 
 import request from 'supertest';
 import app, { prisma } from '../src/routes/app-setup.ts';
 import { paikyGetRandomSalt, paikyHash } from "../src/utils/salt-password.ts";
+import { paikyJWTsign } from "../src/utils/jwt.ts";
 
 //! This test file should be independent of items tests. Meaning that the outcome of items tests should not interfere with this test file.
 
+let user
 
 beforeAll(async () => {
-	const deleted = await prisma.user.deleteMany({
+	await prisma.user.deleteMany({
 		where: {
-			email: 'Carlos@asda.com',
+			email: {
+				in: [ 'Carlos@asda.com', 'constructor@dwati.com'],
+			}
 		},
 	});
 
-	const salt = paikyGetRandomSalt()
-	const password = paikyHash('SolarTechMaster', salt)
 	
-
-	const user = await prisma.user.create({
+	const salt = paikyGetRandomSalt()
+	user = await prisma.user.create({
 		data: {
-			email: 'Carlos@asda.com',
-			password: '',
-			salt: 'pepper',
-			name: 'Carlos',
-			role: 'ENGINEER',
+			email: 'constructor@dwati.com',
+			name: 'constructor',
+			password: paikyHash('minecraft67', salt),
+			salt: salt,
+			role: 'OVERVIEWER',
 		},
 	});
 });
@@ -34,14 +36,14 @@ describe('Login /', () => {
     test('Should Be able to log in', async () => {
 		const result = await request(app)
 			.get('/login')
-			.send({email: 'chzieSn.wei@space.com',password: 'SolarTechMaster'}) // ✅ No need for JSON.stringify()
+			.send({email: 'constructor@dwati.com',password: 'minecraft67'}) // ✅ No need for JSON.stringify()
 			.set('Content-Type', 'application/json')
             .expect(200);
 
         console.log(result.body);
         
-            
-		expect(result.text).toEqual('eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ.eyJ1c2VySWQiOjMxfQ.Ad9oZRN5-ki1V0lhs3GY6FxJRp_0YNoK5I0hbyt0VkM');
+            //% The token will always be different because the user id changes each test.
+		expect(result.text.startsWith('eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ.eyJ1c2VySWQiOj')).toBe(true);
 	});
 
 
@@ -79,7 +81,7 @@ describe('Signup /', () => {
 		//prettier-ignore
 		const result = await request(app)
 			.post('/signup')
-			.send({email: 'chzieSn.wei@space.com',password: 'Carbon7', name: 'Constructor', role: 'ENGINEER'})
+			.send({email: 'constructor@dwati.com',password: 'Carbon7', name: 'Constructor', role: 'ENGINEER'})
 			.set('Content-Type', 'application/json');
 
 		expect(result.body).toEqual({
@@ -97,6 +99,7 @@ describe('Signup /', () => {
 			.set('Content-Type', 'application/json')
 			.expect(200);
 
+            //% The token will always be different because the user id changes each test.
 		expect(result.text.startsWith('eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ')).toBe(true);
 	});
 
@@ -114,15 +117,21 @@ describe('Signup /', () => {
 }); 
 describe('Middleware /', () => {
 		test('Authorization middleware should work', async () => {
+
+            //% The token will always be different because the user id changes each test.
+			const token = paikyJWTsign({userId: user.id}, process.env.SECRET!)
+
 			const result = await request(app)
 				.get('/authtest')
 				.send() // ✅ No need for JSON.stringify()
-				.set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cGUiOiJqd3QifQ.eyJ1c2VySWQiOjMxfQ.Ad9oZRN5-ki1V0lhs3GY6FxJRp_0YNoK5I0hbyt0VkM')
+				.set('Authorization', `Bearer ${token}`)
 				.expect(200);
 
-			expect(result.body.email).toBe("chzieSn.wei@space.com");
+			expect(result.body.email).toBe("constructor@dwati.com");
 		});
 		test('Authorization middleware should not work with tampered token', async () => {
+
+
 			const result = await request(app)
 				.get('/authtest')
 				.send() // ✅ No need for JSON.stringify()

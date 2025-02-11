@@ -19,6 +19,8 @@ export const signup = async (req: Request<{}, {}, SignupSchemaType>, res: Respon
 			},
 		});
 
+		const a = ''
+		
 		if (user) {
 			//% If you don't understand what is going on here I would recommend you:
 			//% 1. Know that this signup CONTROLLER is wrapped inside of "internalErrorHandler()" that is defined in "internal-exeption.ts".
