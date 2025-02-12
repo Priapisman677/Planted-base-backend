@@ -22,46 +22,61 @@ enum Role {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String
-  salt      String
-  //! Should make more specific roles for each type of "worker".
-  role      Role     @default(VISITOR)
-  quarter    Personal_Quarter[]
-  //defaultQuarter Personal_Quarter 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  name     String
+  salt     String
+  role     Role   @default(VISITOR)
+
+  quarter         Personal_Quarter[] @relation("UserQuarters") //$ Since we will have two relationships between the same two tables I understand that it is very important to add custom names to them.
+  favoriteQuarter Personal_Quarter?  @relation("FavoriteQuarter")
+  user_Stored_Items User_Stored_Item[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 
   @@map("users")
 }
 
 model Personal_Quarter {
-  id              Int      @id @default(autoincrement())
-  lockerCapacity  Int
-  zone            String
-  userId          Int
-  user            User     @relation(fields: [userId], references: [id])
-  claimedAt       DateTime @default(now())
-  modifiedAt       DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  lockerCapacity Int
+  zone           String
+  userId         Int
+  user           User     @relation("UserQuarters", fields: [userId], references: [id]) //$ Since we will have two relationships between the same two tables I understand that it is very important to add custom names to them to avoid conflicts and errors.
+  favoritedById  Int?     @unique
+  favoritedBy    User?    @relation("FavoriteQuarter", fields: [favoritedById], references: [id]) //$ Since we will have two relationships between the same two tables I understand that it is very important to add custom names to them to avoid conflicts and errors.
+  claimedAt      DateTime @default(now())
+  modifiedAt     DateTime @updatedAt
 
   @@map("personal_quarter")
 }
 
-model Item {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
-  description String
-  quantity    Int         @default(0)
-  zone        String
-  weight      Int
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  ItemToTag   ItemToTag[]
+model User_Stored_Item {
+  id         Int      @id @default(autoincrement())
+  quantity   Int
+  userId     Int  
+  user       User     @relation(fields: [userId], references: [id])
+  itemId     Int
+  item       Item     @relation(fields: [itemId], references: [id])
+  claimedAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
 
-  // userId  Int
-  // user     User   @relation(fields: [userId], references: [id])
+  @@map("lockers")
+}
+
+model Item {
+  id           Int              @id @default(autoincrement())
+  name         String           @unique
+  description  String
+  quantity     Int              @default(0)
+  zone         String
+  weight       Int
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  ItemToTag    ItemToTag[]
+  storedByUser User_Stored_Item[]
+
   @@map("items")
 }
 

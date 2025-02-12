@@ -26,6 +26,7 @@ export enum ErrorCode {
     UNAUTHORIZED_ROLE = 1010,
     ITEM_ALREADY_EXISTS = 1011,
     QUARTER_NOT_FOUND = 1012,
+    ITEM_ALREADY_STORED = 1013
 }
 
 //* Exceptions:

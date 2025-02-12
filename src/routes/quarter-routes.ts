@@ -2,12 +2,10 @@ import { Router } from 'express';
 import { errorAndValidationHandler } from '../utils/errorAndValidationHandler.js';
 import authMiddleware from '../middlewares/auth-middleware.js';
 //prettier-ignore
-import {overviewerAuthMiddleware, workerRoleAuthMiddleware} from '../middlewares/role-auth-middleware.js';
-//prettier-ignore
-import { claimQuarter, listQuarter, unclaimQuarter } from '../controllers/quarter-controller.js';
+import { claimQuarter, favoriteQuarter, listQuarter, unclaimQuarter } from '../controllers/quarter-controller.js';
 import { tokenSchema } from '../validator-schemas/token-schema.js';
 //prettier-ignore
-import { claimquarterSchema, deletequarterSchema } from '../validator-schemas/quarter-schema.js';
+import { claimquarterSchema, deletequarterSchema, favoriteQuarterSchema} from '../validator-schemas/quarter-schema.js';
 
 const router = Router();
 
@@ -25,5 +23,10 @@ router.delete('/unclaimquarter',
 router.get('/listquarters', 
     errorAndValidationHandler(authMiddleware, tokenSchema), 
     errorAndValidationHandler(listQuarter))
+
+router.put('/favoriteQuarter', 
+    errorAndValidationHandler(authMiddleware, tokenSchema), 
+    errorAndValidationHandler(favoriteQuarter, favoriteQuarterSchema))
+
 
 export default router;

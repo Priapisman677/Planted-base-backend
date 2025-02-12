@@ -13,6 +13,7 @@ export const claimquarterSchema = z.object({
 export type claimQuarterSchemaType = z.infer<typeof claimquarterSchema>['body']
 
 
+
 export const deletequarterSchema = z.object({
     body: z.object({
         quarterId: z.number({required_error: 'quarterId is required'})
@@ -21,4 +22,15 @@ export const deletequarterSchema = z.object({
 })
 
 export type deleteQuarterSchemaType = z.infer<typeof deletequarterSchema>['body']
+
+
+export const favoriteQuarterSchema = z.object({
+    body: z.object({
+        quarterId: z.number({required_error: 'quarterId is required'})
+        .nonnegative('quarterId should not be negative'),
+    })
+})
+
+export type FavoriteQuarterSchemaType = z.infer<typeof favoriteQuarterSchema>['body']
+
 

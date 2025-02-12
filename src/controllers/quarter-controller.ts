@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
 import { prisma } from '../routes/app-setup.js';
 import { BadRequestsException, ErrorCode } from '../exeptions/exceptions.js';
-import {
-	claimQuarterSchemaType,
-	deleteQuarterSchemaType,
-} from '../validator-schemas/quarter-schema.js';
+//prettier-ignore
+import {claimQuarterSchemaType,deleteQuarterSchemaType,FavoriteQuarterSchemaType,} from '../validator-schemas/quarter-schema.js';
 
 export const claimQuarter = async (
 	req: Request<{}, {}, claimQuarterSchemaType>,
@@ -67,4 +65,24 @@ export const listQuarter = async (req: Request, res: Response) => {
     }
 
 	res.send(quarters);
+};
+
+export const favoriteQuarter = async (req: Request<{}, {}, FavoriteQuarterSchemaType>, res: Response) => {
+    const user = (req as any).user;
+	const userId: number = user.id;
+
+    const favoritedQuarter = await prisma.personal_Quarter.updateManyAndReturn({
+        where: {
+            id: req.body.quarterId,
+            userId : user.id
+        },
+        data: {
+            favoritedById: userId
+        }
+    })
+    if(favoritedQuarter.length === 0){
+        //prettier-ignore
+        throw new BadRequestsException('Quarter not found',ErrorCode.QUARTER_NOT_FOUND);
+    }
+    res.send(favoritedQuarter)
 };
